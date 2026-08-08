@@ -1,0 +1,19 @@
+# Go
+*.exe
+*.out
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+downloaded-test.txt
+
+# Local test files
+test.txt
+
+# Stored user files
+storage/*

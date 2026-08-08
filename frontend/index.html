@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Distributed File Storage</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">D</div>
+                <div>
+                    <h2>Distributed</h2>
+                    <span>File Storage</span>
+                </div>
+            </div>
+
+            <nav class="navigation">
+                <a href="#" class="nav-item active">
+                    <span>▣</span>
+                    Dashboard
+                </a>
+
+                <a href="#files" class="nav-item">
+                    <span>□</span>
+                    My Files
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="storage-info">
+                    <span>Storage</span>
+                    <strong>Local Storage</strong>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+
+            <!-- Header -->
+            <header class="topbar">
+                <div>
+                    <p class="welcome">Welcome back 👋</p>
+                    <h1>File Storage Dashboard</h1>
+                </div>
+
+                <div class="status">
+                    <span class="status-dot"></span>
+                    Backend Connected
+                </div>
+            </header>
+
+            <!-- Upload Section -->
+            <section class="upload-card">
+
+                <div class="upload-icon">
+                    ↑
+                </div>
+
+                <div class="upload-content">
+                    <h2>Upload your files</h2>
+                    <p>
+                        Select a file from your computer and store it securely.
+                    </p>
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        hidden
+                    >
+
+                    <button
+                        class="upload-button"
+                        id="uploadButton"
+                    >
+                        Choose File
+                    </button>
+
+                    <p id="selectedFile" class="selected-file">
+                        No file selected
+                    </p>
+                </div>
+
+            </section>
+
+            <!-- Statistics -->
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div>
+                        <span>Total Files</span>
+                        <strong id="totalFiles">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">☁️</div>
+                    <div>
+                        <span>Storage Type</span>
+                        <strong>Local</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div>
+                        <span>System Status</span>
+                        <strong>Online</strong>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Files -->
+            <section class="files-section" id="files">
+
+                <div class="section-header">
+                    <div>
+                        <p class="section-label">YOUR STORAGE</p>
+                        <h2>My Files</h2>
+                    </div>
+
+                    <button
+                        class="refresh-button"
+                        id="refreshButton"
+                    >
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div id="fileList" class="file-list">
+
+                    <div class="empty-state">
+                        <div class="empty-icon">📂</div>
+                        <h3>No files found</h3>
+                        <p>Upload your first file to get started.</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
