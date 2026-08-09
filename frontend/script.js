@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080";
+const API_URL = "https://distributed-file-storage-gs0v.onrender.com";
 
 const fileInput = document.getElementById("fileInput");
 const uploadButton = document.getElementById("uploadButton");
