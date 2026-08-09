@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"distributed-file-storage/internal/handlers"
 )
@@ -46,11 +47,16 @@ func main() {
 	http.HandleFunc("/files", handlers.ListFilesHandler)
 
 	// Start server
-	fmt.Println("Server running on http://localhost:8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	fmt.Printf("Server running on port %s\n", port)
 
 	log.Fatal(
 		http.ListenAndServe(
-			":8080",
+			":"+port,
 			enableCORS(http.DefaultServeMux),
 		),
 	)
