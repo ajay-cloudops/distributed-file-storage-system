@@ -46,6 +46,12 @@ func main() {
 	// File list
 	http.HandleFunc("/files", handlers.ListFilesHandler)
 
+	// File version history
+	http.HandleFunc("/versions", handlers.VersionsHandler)
+
+	// Restore previous file version
+	http.HandleFunc("/restore", handlers.RestoreVersionHandler)
+
 	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {

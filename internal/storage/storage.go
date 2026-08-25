@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"os"
@@ -13,6 +14,12 @@ import (
 
 const bucketName = "ajay-distributed-file-storage-2026"
 const region = "ap-south-1"
+
+type FileVersion struct {
+	VersionID    string `json:"versionId"`
+	IsLatest     bool   `json:"isLatest"`
+	LastModified string `json:"lastModified"`
+}
 
 func getS3Client() (*s3.Client, error) {
 	cfg, err := config.LoadDefaultConfig(
@@ -150,4 +157,84 @@ func GetFile(fileName string) (io.ReadCloser, error) {
 	}
 
 	return result.Body, nil
+}
+
+func ListFileVersions(fileName string) ([]FileVersion, error) {
+	client, err := getS3Client()
+	if err != nil {
+		return nil, err
+	}
+
+	fileName = filepath.Base(fileName)
+
+	result, err := client.ListObjectVersions(
+		context.Background(),
+		&s3.ListObjectVersionsInput{
+			Bucket: aws.String(bucketName),
+			Prefix: aws.String(fileName),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	versions := []FileVersion{}
+
+	for _, version := range result.Versions {
+		if aws.ToString(version.Key) != fileName {
+			continue
+		}
+
+		lastModified := ""
+		if version.LastModified != nil {
+			lastModified = version.LastModified.Format("2006-01-02 15:04:05")
+		}
+
+		versions = append(versions, FileVersion{
+			VersionID:    aws.ToString(version.VersionId),
+			IsLatest:     aws.ToBool(version.IsLatest),
+			LastModified: lastModified,
+		})
+	}
+
+	return versions, nil
+}
+
+func RestoreFileVersion(fileName string, versionID string) error {
+	client, err := getS3Client()
+	if err != nil {
+		return err
+	}
+
+	fileName = filepath.Base(fileName)
+
+	oldVersion, err := client.GetObject(
+		context.Background(),
+		&s3.GetObjectInput{
+			Bucket:    aws.String(bucketName),
+			Key:       aws.String(fileName),
+			VersionId: aws.String(versionID),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	defer oldVersion.Body.Close()
+
+	data, err := io.ReadAll(oldVersion.Body)
+	if err != nil {
+		return err
+	}
+
+	_, err = client.PutObject(
+		context.Background(),
+		&s3.PutObjectInput{
+			Bucket:        aws.String(bucketName),
+			Key:           aws.String(fileName),
+			Body:          bytes.NewReader(data),
+			ContentLength: aws.Int64(int64(len(data))),
+		},
+	)
+
+	return err
 }

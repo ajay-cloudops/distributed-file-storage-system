@@ -21,3 +21,11 @@ func ListFiles() ([]string, error) {
 func GetFile(fileName string) (io.ReadCloser, error) {
 	return storage.GetFile(fileName)
 }
+
+func ListFileVersions(fileName string) ([]storage.FileVersion, error) {
+	return storage.ListFileVersions(fileName)
+}
+
+func RestoreFileVersion(fileName string, versionID string) error {
+	return storage.RestoreFileVersion(fileName, versionID)
+}

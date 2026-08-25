@@ -96,3 +96,48 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(files)
 }
+
+func VersionsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	fileName := r.URL.Query().Get("name")
+	if fileName == "" {
+		http.Error(w, "File name is required", http.StatusBadRequest)
+		return
+	}
+
+	versions, err := services.ListFileVersions(filepath.Base(fileName))
+	if err != nil {
+		http.Error(w, "Failed to list file versions: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(versions)
+}
+
+func RestoreVersionHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	fileName := r.URL.Query().Get("name")
+	versionID := r.URL.Query().Get("versionId")
+
+	if fileName == "" || versionID == "" {
+		http.Error(w, "File name and version ID are required", http.StatusBadRequest)
+		return
+	}
+
+	err := services.RestoreFileVersion(filepath.Base(fileName), versionID)
+	if err != nil {
+		http.Error(w, "Failed to restore version: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Version restored successfully: %s", fileName)
+}
