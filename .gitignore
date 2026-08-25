@@ -17,3 +17,18 @@ test.txt
 
 # Stored user files
 storage/*
+
+# Local storage and test files
+storage/
+*-test.txt
+test-upload.txt
+frontend-test.txt
+api-test.txt
+render-test.txt
+dual-test.txt
+version-test.txt
+downloaded-*.txt
+
+# Local backup files
+*.save
+*.local-backup
