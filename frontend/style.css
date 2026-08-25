@@ -449,3 +449,84 @@ button {
         gap: 12px;
     }
 }
+/* Version History */
+
+.version-panel {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.version-item {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.version-item strong {
+    display: block;
+    font-size: 13px;
+}
+
+.version-item span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.restore-button {
+    border: none;
+    background: #ecfdf3;
+    color: #15803d;
+    padding: 7px 11px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.current-version {
+    color: #15803d !important;
+    font-weight: 700;
+}
+
+/* Fix file row layout */
+
+.file-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.file-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.file-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: 15px;
+}
+
+.version-panel {
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 12px;
+}
+
+@media (max-width: 650px) {
+    .file-actions {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}

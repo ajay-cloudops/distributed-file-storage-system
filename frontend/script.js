@@ -128,12 +128,24 @@ function displayFiles(files) {
                 </button>
 
                 <button
+                    class="download-button"
+                    onclick="showVersions('${encodeURIComponent(fileName)}')"
+                >
+                    🕘 Versions
+                </button>
+
+                <button
                     class="delete-button"
                     onclick="deleteFile('${encodeURIComponent(fileName)}')"
                 >
                     🗑 Delete
                 </button>
             </div>
+
+            <div
+                class="version-panel"
+                id="versions-${encodeURIComponent(fileName)}"
+            ></div>
         `;
 
         fileList.appendChild(fileItem);
@@ -202,3 +214,99 @@ function escapeHTML(value) {
 
 // Load files when page opens
 loadFiles();
+
+
+async function showVersions(encodedFileName) {
+    const fileName = decodeURIComponent(encodedFileName);
+
+    const panel = document.getElementById(
+        `versions-${encodeURIComponent(fileName)}`
+    );
+
+    panel.innerHTML = "Loading versions...";
+
+    try {
+        const response = await fetch(
+            `${API_URL}/versions?name=${encodeURIComponent(fileName)}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Unable to load versions");
+        }
+
+        const versions = await response.json();
+
+        if (versions.length === 0) {
+            panel.innerHTML = "<p>No previous versions found.</p>";
+            return;
+        }
+
+        panel.innerHTML = versions.map((version, index) => `
+            <div class="version-item">
+                <div>
+                    <strong>
+                        ${version.isLatest ? "Current Version" : `Version ${index + 1}`}
+                    </strong>
+                    <span>${escapeHTML(version.lastModified)}</span>
+                </div>
+
+                ${
+                    version.isLatest
+                    ? `<span class="current-version">Current</span>`
+                    : `
+                    <button
+                        class="restore-button"
+                        onclick="restoreVersion(
+                            '${encodeURIComponent(fileName)}',
+                            '${encodeURIComponent(version.versionId)}'
+                        )"
+                    >
+                        Restore
+                    </button>
+                    `
+                }
+            </div>
+        `).join("");
+
+    } catch (error) {
+        console.error("Version history error:", error);
+        panel.innerHTML = "<p>Unable to load version history.</p>";
+    }
+}
+
+async function restoreVersion(encodedFileName, encodedVersionID) {
+    const fileName = decodeURIComponent(encodedFileName);
+    const versionID = decodeURIComponent(encodedVersionID);
+
+    const confirmed = confirm(
+        `Restore previous version of "${fileName}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_URL}/restore?name=${encodeURIComponent(fileName)}&versionId=${encodeURIComponent(versionID)}`,
+            {
+                method: "POST"
+            }
+        );
+
+        const result = await response.text();
+
+        if (!response.ok) {
+            throw new Error(result);
+        }
+
+        alert("✓ Previous version restored successfully");
+
+        await loadFiles();
+        await showVersions(encodedFileName);
+
+    } catch (error) {
+        console.error("Restore error:", error);
+        alert("Unable to restore previous version.");
+    }
+}
