@@ -530,3 +530,49 @@ button {
         flex-wrap: wrap;
     }
 }
+
+/* Storage navigation */
+
+.back-storage-button {
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--text);
+    padding: 8px 13px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.back-storage-button:hover {
+    background: #f8fafc;
+}
+
+/* Logout */
+
+.logout-section {
+    margin-top: auto;
+    padding: 18px;
+}
+
+.logout-button {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    background: transparent;
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.logout-button:hover {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.logout-button span {
+    margin-right: 7px;
+}

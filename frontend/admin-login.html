@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Distributed File Storage</title>
+    <link rel="stylesheet" href="admin-login.css">
+</head>
+<body>
+
+    <div class="page">
+
+        <div class="left-panel">
+
+            <div class="brand">
+                <div class="brand-icon">D</div>
+
+                <div>
+                    <h2>Distributed File Storage</h2>
+                    <p>Administration Portal</p>
+                </div>
+            </div>
+
+            <div class="hero">
+                <span class="tag">ADMIN CONTROL</span>
+
+                <h1>
+                    Manage users.<br>
+                    Monitor storage.<br>
+                    <span>Recover deleted files.</span>
+                </h1>
+
+                <p>
+                    Administrative access provides visibility across users,
+                    AWS S3 storage, deleted files and recovery operations.
+                </p>
+
+                <div class="feature-list">
+                    <div>👥 View all users</div>
+                    <div>☁️ Manage AWS S3 files</div>
+                    <div>🗑 View deleted files</div>
+                    <div>↻ Restore user files</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right-panel">
+
+            <div class="login-card">
+
+                <button class="back-button" onclick="window.location.href='role-select.html'">
+                    ← Back
+                </button>
+
+                <p class="small-title">ADMINISTRATOR</p>
+
+                <h2>Admin Sign In</h2>
+
+                <p class="subtitle">
+                    Use your registered administrator mobile number and password.
+                </p>
+
+                <form id="adminLoginForm">
+
+                    <label>Mobile Number</label>
+
+                    <div class="input-box">
+                        <span>📱</span>
+
+                        <input
+                            type="tel"
+                            id="adminPhone"
+                            placeholder="+91 98765 43210"
+                            required
+                        >
+                    </div>
+
+                    <label>Password</label>
+
+                    <div class="input-box">
+                        <span>🔒</span>
+
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            placeholder="Enter admin password"
+                            required
+                        >
+                    </div>
+
+                    <div id="adminError" class="error"></div>
+
+                    <button type="submit" class="login-button">
+                        Sign In as Admin
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+                <div class="admin-auth-links">
+                    <button type="button" id="adminCreateAccount">
+                        Create Admin Account
+                    </button>
+
+                    <button type="button" id="adminForgotPassword">
+                        Forgot Password?
+                    </button>
+                </div>
+
+                <div class="security-note">
+                    🛡 Administrative access is restricted.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+<script src="https://unpkg.com/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+<script src="admin-auth.js"></script>
+</body>
+</html>

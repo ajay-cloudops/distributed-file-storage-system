@@ -29,3 +29,19 @@ func ListFileVersions(fileName string) ([]storage.FileVersion, error) {
 func RestoreFileVersion(fileName string, versionID string) error {
 	return storage.RestoreFileVersion(fileName, versionID)
 }
+
+func ListLocalFiles() ([]string, error) {
+	return storage.ListLocalFiles()
+}
+
+func ListS3Files() ([]string, error) {
+	return storage.ListS3Files()
+}
+
+func DeleteLocalFile(fileName string) error {
+	return storage.DeleteLocalFile(fileName)
+}
+
+func DeleteS3File(fileName string) error {
+	return storage.DeleteS3File(fileName)
+}

@@ -341,3 +341,90 @@ func RestoreFileVersion(fileName string, versionID string) error {
 
 	return os.WriteFile(localPath, data, 0644)
 }
+
+// ListLocalFiles returns only files stored on this machine.
+func ListLocalFiles() ([]string, error) {
+	err := os.MkdirAll(localStorageDir, 0755)
+	if err != nil {
+		return nil, err
+	}
+
+	entries, err := os.ReadDir(localStorageDir)
+	if err != nil {
+		return nil, err
+	}
+
+	files := []string{}
+
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			files = append(files, entry.Name())
+		}
+	}
+
+	sort.Strings(files)
+	return files, nil
+}
+
+// ListS3Files returns only files currently stored in AWS S3.
+func ListS3Files() ([]string, error) {
+	client, err := getS3Client()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := client.ListObjectsV2(
+		context.Background(),
+		&s3.ListObjectsV2Input{
+			Bucket: aws.String(bucketName),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	files := []string{}
+
+	for _, obj := range result.Contents {
+		if obj.Key != nil {
+			files = append(files, *obj.Key)
+		}
+	}
+
+	sort.Strings(files)
+	return files, nil
+}
+
+// DeleteLocalFile removes only the local copy.
+func DeleteLocalFile(fileName string) error {
+	fileName = filepath.Base(fileName)
+
+	err := os.Remove(filepath.Join(localStorageDir, fileName))
+
+	if os.IsNotExist(err) {
+		return nil
+	}
+
+	return err
+}
+
+// DeleteS3File removes only the S3 copy.
+// Local copy remains safe.
+func DeleteS3File(fileName string) error {
+	client, err := getS3Client()
+	if err != nil {
+		return err
+	}
+
+	fileName = filepath.Base(fileName)
+
+	_, err = client.DeleteObject(
+		context.Background(),
+		&s3.DeleteObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(fileName),
+		},
+	)
+
+	return err
+}

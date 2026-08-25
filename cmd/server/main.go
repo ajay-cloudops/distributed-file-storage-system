@@ -46,6 +46,14 @@ func main() {
 	// File list
 	http.HandleFunc("/files", handlers.ListFilesHandler)
 
+	// Separate Local and AWS S3 storage views
+	http.HandleFunc("/files/local", handlers.ListLocalFilesHandler)
+	http.HandleFunc("/files/s3", handlers.ListS3FilesHandler)
+
+	// Independent delete operations
+	http.HandleFunc("/delete/local", handlers.DeleteLocalFileHandler)
+	http.HandleFunc("/delete/s3", handlers.DeleteS3FileHandler)
+
 	// File version history
 	http.HandleFunc("/versions", handlers.VersionsHandler)
 

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Distributed File Storage</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="login-page">
+
+        <div class="login-left">
+            <div class="brand">
+                <div class="brand-logo">D</div>
+
+                <div>
+                    <h2>Distributed File Storage</h2>
+                    <p>Local + AWS Cloud Storage</p>
+                </div>
+            </div>
+
+            <div class="hero">
+                <span class="tag">SECURE CLOUD PLATFORM</span>
+
+                <h1>
+                    Your files.<br>
+                    Stored locally.<br>
+                    <span>Backed up in the cloud.</span>
+                </h1>
+
+                <p>
+                    Store and manage your files across local storage and AWS S3
+                    with automatic replication and version recovery.
+                </p>
+
+                <div class="feature-row">
+                    <div>💻 Local Storage</div>
+                    <div>☁️ AWS S3 Cloud</div>
+                    <div>🔁 Replication</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-right">
+
+            <div class="login-card">
+
+                <div class="mobile-logo">D</div>
+
+                
+<button type="button"
+        class="user-back-button"
+        onclick="window.location.href='role-select.html'">
+    ← Back
+</button>
+
+<p class="small-title">WELCOME BACK</p>
+
+                <h2>Sign in to your account</h2>
+
+                <p class="subtitle">
+                    Enter your credentials to access your storage dashboard.
+                </p>
+
+                <form id="loginForm">
+
+                    <label>Email Address</label>
+
+                    <div class="input-box">
+                        <span>✉</span>
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+
+                    <label>Password</label>
+
+                    <div class="input-box">
+                        <span>🔒</span>
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+
+                    <div class="login-error" id="loginError"></div>
+
+                    <button type="submit">
+                        Sign In
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+                <div class="auth-links">
+                    <button type="button" id="createAccountButton">
+                        Create Account
+                    </button>
+
+                    <button type="button" id="forgotPasswordButton">
+                        Forgot Password?
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+    
+
+
+
+<script src="https://unpkg.com/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+<script src="auth.js"></script>
+</body>
+
+</html>

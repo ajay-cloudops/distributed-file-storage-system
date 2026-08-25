@@ -141,3 +141,79 @@ func RestoreVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "Version restored successfully: %s", fileName)
 }
+
+func ListLocalFilesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	files, err := services.ListLocalFiles()
+	if err != nil {
+		http.Error(w, "Failed to list local files: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(files)
+}
+
+func ListS3FilesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	files, err := services.ListS3Files()
+	if err != nil {
+		http.Error(w, "Failed to list S3 files: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(files)
+}
+
+func DeleteLocalFileHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Only DELETE method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	fileName := r.URL.Query().Get("name")
+
+	if fileName == "" {
+		http.Error(w, "File name is required", http.StatusBadRequest)
+		return
+	}
+
+	err := services.DeleteLocalFile(filepath.Base(fileName))
+	if err != nil {
+		http.Error(w, "Failed to delete local file", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Local copy deleted successfully: %s", fileName)
+}
+
+func DeleteS3FileHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Only DELETE method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	fileName := r.URL.Query().Get("name")
+
+	if fileName == "" {
+		http.Error(w, "File name is required", http.StatusBadRequest)
+		return
+	}
+
+	err := services.DeleteS3File(filepath.Base(fileName))
+	if err != nil {
+		http.Error(w, "Failed to delete S3 file", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "S3 copy deleted successfully: %s", fileName)
+}

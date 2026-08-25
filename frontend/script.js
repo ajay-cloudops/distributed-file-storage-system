@@ -1,4 +1,26 @@
-const API_URL = "https://distributed-file-storage-gs0v.onrender.com";
+const LIVE_API_URL = "https://distributed-file-storage-gs0v.onrender.com";
+const LOCAL_API_URL = "http://localhost:8080";
+
+const params = new URLSearchParams(window.location.search);
+const selectedStorage =
+    params.get("storage") ||
+    localStorage.getItem("selectedStorage") ||
+    "s3";
+
+const API_URL =
+    selectedStorage === "local"
+        ? LOCAL_API_URL
+        : LIVE_API_URL;
+
+const FILES_ENDPOINT =
+    selectedStorage === "local"
+        ? "/files/local"
+        : "/files/s3";
+
+const DELETE_ENDPOINT =
+    selectedStorage === "local"
+        ? "/delete/local"
+        : "/delete/s3";
 
 const fileInput = document.getElementById("fileInput");
 const uploadButton = document.getElementById("uploadButton");
@@ -60,7 +82,7 @@ async function uploadFile(file) {
 // Load files
 async function loadFiles() {
     try {
-        const response = await fetch(`${API_URL}/files`);
+        const response = await fetch(`${API_URL}${FILES_ENDPOINT}`);
 
         if (!response.ok) {
             throw new Error("Failed to load files");
@@ -176,7 +198,7 @@ async function deleteFile(encodedFileName) {
 
     try {
         const response = await fetch(
-            `${API_URL}/delete?name=${encodeURIComponent(fileName)}`,
+            `${API_URL}${DELETE_ENDPOINT}?name=${encodeURIComponent(fileName)}`,
             {
                 method: "DELETE"
             }
@@ -309,4 +331,145 @@ async function restoreVersion(encodedFileName, encodedVersionID) {
         console.error("Restore error:", error);
         alert("Unable to restore previous version.");
     }
+}
+
+// Update dashboard labels according to selected storage
+function updateStorageUI() {
+    const title = document.getElementById("dashboardTitle");
+
+    if (selectedStorage === "local") {
+        if (title) {
+            title.textContent = "Local Storage Dashboard";
+        }
+
+        document.title = "Local Storage";
+
+    } else {
+        if (title) {
+            title.textContent = "AWS S3 Storage Dashboard";
+        }
+
+        document.title = "AWS S3 Storage";
+    }
+}
+
+updateStorageUI();
+
+// Set dashboard text according to selected storage
+function applySelectedStorageMode() {
+    const sidebarStorage =
+        document.getElementById("sidebarStorageType");
+
+    const primaryLabel =
+        document.getElementById("primaryStorageLabel");
+
+    const primaryStatus =
+        document.getElementById("primaryStorageStatus");
+
+    const secondaryLabel =
+        document.getElementById("secondaryStorageLabel");
+
+    const secondaryStatus =
+        document.getElementById("secondaryStorageStatus");
+
+    const replicationLabel =
+        document.getElementById("replicationLabel");
+
+    const replicationStatus =
+        document.getElementById("replicationStatus");
+
+    if (selectedStorage === "local") {
+        if (sidebarStorage) {
+            sidebarStorage.textContent = "Local Storage";
+        }
+
+        if (primaryLabel) {
+            primaryLabel.textContent = "Storage Type";
+        }
+
+        if (primaryStatus) {
+            primaryStatus.textContent = "Local Device";
+        }
+
+        if (secondaryLabel) {
+            secondaryLabel.textContent = "Cloud Backup";
+        }
+
+        if (secondaryStatus) {
+            secondaryStatus.textContent = "AWS S3 Available";
+        }
+
+        if (replicationLabel) {
+            replicationLabel.textContent = "Current View";
+        }
+
+        if (replicationStatus) {
+            replicationStatus.textContent = "Local Files";
+        }
+
+    } else {
+        if (sidebarStorage) {
+            sidebarStorage.textContent = "AWS S3 Storage";
+        }
+
+        if (primaryLabel) {
+            primaryLabel.textContent = "Storage Type";
+        }
+
+        if (primaryStatus) {
+            primaryStatus.textContent = "AWS S3 Cloud";
+        }
+
+        if (secondaryLabel) {
+            secondaryLabel.textContent = "Region";
+        }
+
+        if (secondaryStatus) {
+            secondaryStatus.textContent = "Mumbai";
+        }
+
+        if (replicationLabel) {
+            replicationLabel.textContent = "Current View";
+        }
+
+        if (replicationStatus) {
+            replicationStatus.textContent = "Cloud Files";
+        }
+    }
+}
+
+applySelectedStorageMode();
+
+// Sidebar storage label
+const sidebarStorageType =
+    document.getElementById("sidebarStorageType");
+
+if (sidebarStorageType) {
+    sidebarStorageType.textContent =
+        selectedStorage === "local"
+            ? "Local Storage"
+            : "AWS S3 Storage";
+}
+
+// ======================================
+// AUTHENTICATION GUARD
+// ======================================
+
+if (sessionStorage.getItem("dfsAuthenticated") !== "true") {
+    window.location.href = "login.html";
+}
+
+// ======================================
+// LOGOUT
+// ======================================
+
+function logoutUser() {
+    sessionStorage.removeItem("dfsAuthenticated");
+    sessionStorage.removeItem("dfsIdToken");
+    sessionStorage.removeItem("dfsAccessToken");
+    sessionStorage.removeItem("dfsUserEmail");
+
+    localStorage.removeItem("selectedStorage");
+
+    window.location.href = "login.html";
 }

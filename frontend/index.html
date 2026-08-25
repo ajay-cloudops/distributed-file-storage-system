@@ -38,10 +38,17 @@
             <div class="sidebar-bottom">
                 <div class="storage-info">
                     <span>Storage</span>
-                    <strong>AWS S3 Storage</strong>
+                    <strong id="sidebarStorageType">AWS S3 Storage</strong>
                 </div>
             </div>
-        </aside>
+        
+        <div class="logout-section">
+            <button class="logout-button" onclick="logoutUser()">
+                <span>↪</span>
+                Logout
+            </button>
+        </div>
+</aside>
 
         <!-- Main Content -->
         <main class="main">
@@ -49,8 +56,14 @@
             <!-- Header -->
             <header class="topbar">
                 <div>
+                    <button
+                        class="back-storage-button"
+                        onclick="window.location.href='storage-select.html'"
+                    >
+                        ← Choose Storage
+                    </button>
                     <p class="welcome">Welcome back 👋</p>
-                    <h1>File Storage Dashboard</h1>
+                    <h1 id="dashboardTitle">File Storage Dashboard</h1>
                 </div>
 
                 <div class="status">
@@ -104,18 +117,26 @@
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon">☁️</div>
+                    <div class="stat-icon">💻</div>
                     <div>
-                        <span>Storage Type</span>
-                        <strong>AWS S3</strong>
+                        <span id="primaryStorageLabel">Local Storage</span>
+                        <strong id="primaryStorageStatus">Active ✓</strong>
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon">⚡</div>
+                    <div class="stat-icon">☁️</div>
                     <div>
-                        <span>System Status</span>
-                        <strong>Online</strong>
+                        <span id="secondaryStorageLabel">AWS S3 Cloud</span>
+                        <strong id="secondaryStorageStatus">Active ✓</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔁</div>
+                    <div>
+                        <span id="replicationLabel">Replication</span>
+                        <strong id="replicationStatus">Enabled ✓</strong>
                     </div>
                 </div>
 
