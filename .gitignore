@@ -32,3 +32,4 @@ downloaded-*.txt
 # Local backup files
 *.save
 *.local-backup
+*.backup
