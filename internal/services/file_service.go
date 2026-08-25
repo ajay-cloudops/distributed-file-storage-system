@@ -2,7 +2,6 @@ package services
 
 import (
 	"io"
-	"path/filepath"
 
 	"distributed-file-storage/internal/storage"
 )
@@ -19,6 +18,6 @@ func ListFiles() ([]string, error) {
 	return storage.ListFiles()
 }
 
-func GetFilePath(fileName string) string {
-	return filepath.Join("storage", filepath.Base(fileName))
+func GetFile(fileName string) (io.ReadCloser, error) {
+	return storage.GetFile(fileName)
 }

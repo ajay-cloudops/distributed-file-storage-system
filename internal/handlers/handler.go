@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 
-	"distributed-file-storage/internal/storage"
+	"distributed-file-storage/internal/services"
 )
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,9 +23,9 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	path, err := storage.SaveFile(header.Filename, file)
+	path, err := services.UploadFile(header.Filename, file)
 	if err != nil {
-		http.Error(w, "Failed to save file", http.StatusInternalServerError)
+		http.Error(w, "Failed to upload file to S3: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -38,15 +39,25 @@ func DownloadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fileName := r.URL.Query().Get("name")
-
 	if fileName == "" {
 		http.Error(w, "File name is required", http.StatusBadRequest)
 		return
 	}
 
-	filePath := filepath.Join("storage", filepath.Base(fileName))
+	file, err := services.GetFile(filepath.Base(fileName))
+	if err != nil {
+		http.Error(w, "File not found in S3", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
 
-	http.ServeFile(w, r, filePath)
+	w.Header().Set("Content-Disposition", "attachment; filename=\""+filepath.Base(fileName)+"\"")
+
+	_, err = io.Copy(w, file)
+	if err != nil {
+		http.Error(w, "Failed to download file", http.StatusInternalServerError)
+		return
+	}
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,15 +67,14 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fileName := r.URL.Query().Get("name")
-
 	if fileName == "" {
 		http.Error(w, "File name is required", http.StatusBadRequest)
 		return
 	}
 
-	err := storage.DeleteFile(fileName)
+	err := services.DeleteFile(fileName)
 	if err != nil {
-		http.Error(w, "File not found", http.StatusNotFound)
+		http.Error(w, "Failed to delete file from S3", http.StatusInternalServerError)
 		return
 	}
 
@@ -77,13 +87,12 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files, err := storage.ListFiles()
+	files, err := services.ListFiles()
 	if err != nil {
-		http.Error(w, "Failed to list files", http.StatusInternalServerError)
+		http.Error(w, "Failed to list files from S3: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
 	json.NewEncoder(w).Encode(files)
 }
