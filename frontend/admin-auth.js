@@ -1,6 +1,6 @@
 const adminPoolData = {
-    UserPoolId: "PASTE_ADMIN_USER_POOL_ID_HERE",
-    ClientId: "PASTE_ADMIN_APP_CLIENT_ID_HERE"
+    UserPoolId: "ap-south-1_Fveo5Tryk",
+    ClientId: "1qau16uclj0p2frb7plfr0a9m3"
 };
 
 const adminUserPool =
@@ -103,79 +103,99 @@ function verifyAdmin(phone) {
 // ADMIN LOGIN
 // ===============================
 
-adminForm.addEventListener("submit", function(event) {
-
+adminForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const phone =
-        document.getElementById("adminPhone")
-            .value.trim();
+        document.getElementById("adminPhone").value.trim();
 
     const password =
-        document.getElementById("adminPassword")
-            .value;
+        document.getElementById("adminPassword").value;
 
     adminError.textContent = "Signing in...";
 
-    const authenticationDetails =
-        new AmazonCognitoIdentity.AuthenticationDetails({
-            Username: phone,
-            Password: password
-        });
-
-    const cognitoUser =
-        new AmazonCognitoIdentity.CognitoUser({
-            Username: phone,
-            Pool: adminUserPool
-        });
-
-    cognitoUser.authenticateUser(
-        authenticationDetails,
-        {
-            onSuccess: function(result) {
-
-                sessionStorage.setItem(
-                    "dfsAdminAuthenticated",
-                    "true"
-                );
-
-                sessionStorage.setItem(
-                    "dfsAdminIdToken",
-                    result.getIdToken().getJwtToken()
-                );
-
-                sessionStorage.setItem(
-                    "dfsAdminAccessToken",
-                    result.getAccessToken().getJwtToken()
-                );
-
-                sessionStorage.setItem(
-                    "dfsAdminPhone",
-                    phone
-                );
-
-                adminError.textContent =
-                    "Admin login successful ✓";
-
-                setTimeout(() => {
-                    window.location.href =
-                        "admin-dashboard.html";
-                }, 400);
-            },
-
-            onFailure: function(error) {
-
-                console.error(error);
-
-                sessionStorage.removeItem(
-                    "dfsAdminAuthenticated"
-                );
-
-                adminError.textContent =
-                    "Invalid admin mobile number or password.";
+    try {
+        const response = await fetch(
+            "https://cognito-idp.ap-south-1.amazonaws.com/",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-amz-json-1.1",
+                    "X-Amz-Target":
+                        "AWSCognitoIdentityProviderService.InitiateAuth"
+                },
+                body: JSON.stringify({
+                    AuthFlow: "USER_PASSWORD_AUTH",
+                    ClientId: "1qau16uclj0p2frb7plfr0a9m3",
+                    AuthParameters: {
+                        USERNAME: phone,
+                        PASSWORD: password
+                    }
+                })
             }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Admin login failed:", data);
+
+            adminError.textContent =
+                data.message ||
+                data.__type ||
+                "Invalid admin mobile number or password.";
+
+            return;
         }
-    );
+
+        if (
+            data.ChallengeName === "NEW_PASSWORD_REQUIRED"
+        ) {
+            adminError.textContent =
+                "Admin must set a new password first.";
+            return;
+        }
+
+        if (!data.AuthenticationResult) {
+            adminError.textContent =
+                "Authentication could not be completed.";
+            return;
+        }
+
+        sessionStorage.setItem(
+            "dfsAdminAuthenticated",
+            "true"
+        );
+
+        sessionStorage.setItem(
+            "dfsAdminIdToken",
+            data.AuthenticationResult.IdToken
+        );
+
+        sessionStorage.setItem(
+            "dfsAdminAccessToken",
+            data.AuthenticationResult.AccessToken
+        );
+
+        sessionStorage.setItem(
+            "dfsAdminPhone",
+            phone
+        );
+
+        adminError.textContent =
+            "Admin login successful ✓";
+
+        setTimeout(() => {
+            window.location.href =
+                "admin-dashboard.html";
+        }, 400);
+
+    } catch (error) {
+        console.error("Admin network error:", error);
+
+        adminError.textContent =
+            "Unable to connect to Cognito. Please try again.";
+    }
 });
 
 
