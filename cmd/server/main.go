@@ -15,7 +15,7 @@ func enableCORS(next http.Handler) http.Handler {
 		// Allow frontend to communicate with backend
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		// Handle browser preflight request
 		if r.Method == http.MethodOptions {
@@ -59,6 +59,19 @@ func main() {
 
 	// Restore previous file version
 	http.HandleFunc("/restore", handlers.RestoreVersionHandler)
+
+	// Authenticated user APIs
+	http.HandleFunc("/api/me", handlers.UserProfileHandler)
+	http.HandleFunc("/api/me/upload", handlers.UserUploadHandler)
+	http.HandleFunc("/api/me/files/local", handlers.UserLocalFilesHandler)
+	http.HandleFunc("/api/me/files/s3", handlers.UserS3FilesHandler)
+	http.HandleFunc("/api/me/delete/local", handlers.UserDeleteLocalHandler)
+	http.HandleFunc("/api/me/delete/s3", handlers.UserDeleteS3Handler)
+
+	// Admin APIs
+	http.HandleFunc("/api/admin/files", handlers.AdminFilesHandler)
+	http.HandleFunc("/api/admin/deleted", handlers.AdminDeletedFilesHandler)
+	http.HandleFunc("/api/admin/restore", handlers.AdminRestoreDeletedHandler)
 
 	// Start server
 	port := os.Getenv("PORT")

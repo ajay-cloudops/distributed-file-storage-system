@@ -19,7 +19,7 @@ test.txt
 storage/*
 
 # Local storage and test files
-storage/
+/storage/
 *-test.txt
 test-upload.txt
 frontend-test.txt

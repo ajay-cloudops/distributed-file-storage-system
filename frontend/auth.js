@@ -116,6 +116,13 @@ createAccountButton.addEventListener(
     "click",
     function() {
 
+        const name =
+            prompt("Enter your full name:");
+
+        if (!name) {
+            return;
+        }
+
         const email =
             prompt("Enter your email address:");
 
@@ -132,16 +139,22 @@ createAccountButton.addEventListener(
             return;
         }
 
+        const nameAttribute =
+            new AmazonCognitoIdentity.CognitoUserAttribute({
+                Name: "name",
+                Value: name.trim()
+            });
+
         const emailAttribute =
             new AmazonCognitoIdentity.CognitoUserAttribute({
                 Name: "email",
-                Value: email
+                Value: email.trim()
             });
 
         userPool.signUp(
-            email,
+            email.trim(),
             password,
-            [emailAttribute],
+            [nameAttribute, emailAttribute],
             null,
 
             function(error) {

@@ -14,13 +14,23 @@ const API_URL =
 
 const FILES_ENDPOINT =
     selectedStorage === "local"
-        ? "/files/local"
-        : "/files/s3";
+        ? "/api/me/files/local"
+        : "/api/me/files/s3";
 
 const DELETE_ENDPOINT =
     selectedStorage === "local"
-        ? "/delete/local"
-        : "/delete/s3";
+        ? "/api/me/delete/local"
+        : "/api/me/delete/s3";
+
+const USER_UPLOAD_ENDPOINT = "/api/me/upload";
+
+function authHeaders() {
+    const token = sessionStorage.getItem("dfsAccessToken");
+
+    return {
+        "Authorization": `Bearer ${token}`
+    };
+}
 
 const fileInput = document.getElementById("fileInput");
 const uploadButton = document.getElementById("uploadButton");
@@ -54,8 +64,9 @@ async function uploadFile(file) {
     selectedFile.textContent = `Uploading ${file.name}...`;
 
     try {
-        const response = await fetch(`${API_URL}/upload`, {
+        const response = await fetch(`${API_URL}${USER_UPLOAD_ENDPOINT}`, {
             method: "POST",
+            headers: authHeaders(),
             body: formData
         });
 
@@ -82,7 +93,12 @@ async function uploadFile(file) {
 // Load files
 async function loadFiles() {
     try {
-        const response = await fetch(`${API_URL}${FILES_ENDPOINT}`);
+        const response = await fetch(
+            `${API_URL}${FILES_ENDPOINT}`,
+            {
+                headers: authHeaders()
+            }
+        );
 
         if (!response.ok) {
             throw new Error("Failed to load files");
@@ -200,7 +216,8 @@ async function deleteFile(encodedFileName) {
         const response = await fetch(
             `${API_URL}${DELETE_ENDPOINT}?name=${encodeURIComponent(fileName)}`,
             {
-                method: "DELETE"
+                method: "DELETE",
+                headers: authHeaders()
             }
         );
 
@@ -473,3 +490,50 @@ function logoutUser() {
 
     window.location.href = "login.html";
 }
+
+// ===============================
+// USER PROFILE
+// ===============================
+
+async function loadUserProfile() {
+    try {
+        const response = await fetch(
+            `${API_URL}/api/me`,
+            {
+                headers: authHeaders()
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const user = await response.json();
+
+        const welcome =
+            document.querySelector(".welcome");
+
+        if (welcome && user.name) {
+            welcome.textContent =
+                `Welcome, ${user.name} 👋`;
+        }
+
+        sessionStorage.setItem(
+            "dfsUserName",
+            user.name || ""
+        );
+
+        sessionStorage.setItem(
+            "dfsUserSub",
+            user.sub || ""
+        );
+
+    } catch (error) {
+        console.error(
+            "Unable to load user profile:",
+            error
+        );
+    }
+}
+
+loadUserProfile();

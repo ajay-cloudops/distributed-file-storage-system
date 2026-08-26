@@ -45,7 +45,13 @@
                 </p>
             </div>
 
-            <div class="storage-grid">
+            
+<div id="userProfileStatus"
+     style="text-align:center; margin:20px 0; font-size:14px; color:#64748b;">
+    Checking signed-in user...
+</div>
+
+<div class="storage-grid">
 
                 <div class="storage-card local-card" id="localCard">
 
@@ -128,6 +134,48 @@
             window.location.href = "dashboard.html?storage=s3";
         }
     </script>
+
+
+<script>
+async function verifyLoggedInUser() {
+    const token = sessionStorage.getItem("dfsAccessToken");
+    const status = document.getElementById("userProfileStatus");
+
+    if (!token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            "http://localhost:8080/api/me",
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) {
+            status.textContent = "Authentication failed";
+            return;
+        }
+
+        const user = await response.json();
+
+        status.textContent =
+            `Signed in as ${user.name || user.email || "User"} ✓`;
+
+        sessionStorage.setItem("dfsUserName", user.name || "");
+        sessionStorage.setItem("dfsUserSub", user.sub || "");
+
+    } catch (error) {
+        status.textContent = "Unable to connect to local backend";
+    }
+}
+
+verifyLoggedInUser();
+</script>
 
 </body>
 </html>

@@ -25,6 +25,12 @@ const adminForgotPassword =
 
 adminCreateAccount.addEventListener("click", function() {
 
+    const name = prompt(
+        "Enter admin full name:"
+    );
+
+    if (!name) return;
+
     const phone = prompt(
         "Enter admin mobile number with country code, e.g. +919876543210"
     );
@@ -37,6 +43,12 @@ adminCreateAccount.addEventListener("click", function() {
 
     if (!password) return;
 
+    const nameAttribute =
+        new AmazonCognitoIdentity.CognitoUserAttribute({
+            Name: "name",
+            Value: name.trim()
+        });
+
     const phoneAttribute =
         new AmazonCognitoIdentity.CognitoUserAttribute({
             Name: "phone_number",
@@ -46,7 +58,7 @@ adminCreateAccount.addEventListener("click", function() {
     adminUserPool.signUp(
         phone.trim(),
         password,
-        [phoneAttribute],
+        [nameAttribute, phoneAttribute],
         null,
 
         function(error) {
