@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">D</div>
+            <div>
+                <h2>Distributed</h2>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="#" class="active">▣ Dashboard</a>
+            <a href="#users">👥 Users</a>
+            <a href="#files">📁 All Files</a>
+            <a href="#deleted">🗑 Deleted Files</a>
+            <a href="#s3">☁️ AWS S3</a>
+        </nav>
+
+        <button class="logout" onclick="logoutAdmin()">
+            ↪ Logout
+        </button>
+    </aside>
+
+    <main class="main">
+
+        <header>
+            <div>
+                <p class="label">ADMIN CONTROL</p>
+                <h1>Administrator Dashboard</h1>
+                <p class="sub">
+                    Manage users, storage and recovery operations.
+                </p>
+            </div>
+
+            <div class="status">
+                ● Admin Authenticated
+            </div>
+        </header>
+
+        <section class="stats">
+            <div class="card">
+                <span>👥</span>
+                <div>
+                    <small>Total Users</small>
+                    <strong id="totalUsers">0</strong>
+                </div>
+            </div>
+
+            <div class="card">
+                <span>📁</span>
+                <div>
+                    <small>Total Files</small>
+                    <strong id="totalFiles">0</strong>
+                </div>
+            </div>
+
+            <div class="card">
+                <span>🗑</span>
+                <div>
+                    <small>Deleted Files</small>
+                    <strong id="deletedFiles">0</strong>
+                </div>
+            </div>
+
+            <div class="card">
+                <span>☁️</span>
+                <div>
+                    <small>S3 Storage</small>
+                    <strong>Connected</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="users">
+            <div class="panel-title">
+                <div>
+                    <p>USER MANAGEMENT</p>
+                    <h2>Users</h2>
+                </div>
+            </div>
+
+            <div class="empty">
+                User-wise file management will appear here.
+            </div>
+        </section>
+
+        <section class="panel" id="deleted">
+            <div class="panel-title">
+                <div>
+                    <p>RECOVERY</p>
+                    <h2>Deleted Files</h2>
+                </div>
+            </div>
+
+            <div class="empty">
+                Deleted file, deleted-by user and restore controls will appear here.
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+if (sessionStorage.getItem("dfsAdminAuthenticated") !== "true") {
+    window.location.href = "admin-login.html";
+}
+
+function logoutAdmin() {
+    sessionStorage.removeItem("dfsAdminAuthenticated");
+    sessionStorage.removeItem("dfsAdminIdToken");
+    sessionStorage.removeItem("dfsAdminAccessToken");
+    sessionStorage.removeItem("dfsAdminPhone");
+
+    window.location.href = "admin-login.html";
+}
+</script>
+
+</body>
+</html>
