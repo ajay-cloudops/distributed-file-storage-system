@@ -1,6 +1,6 @@
 const adminPoolData = {
-    UserPoolId: "ap-south-1_Fveo5Tryk",
-    ClientId: "1qau16uclj0p2frb7plfr0a9m3"
+    UserPoolId: "ap-south-1_RdvZbNKYZ",
+    ClientId: "562c4caevoa8c45g3b9iqvgqf4"
 };
 
 const adminUserPool =
@@ -126,7 +126,7 @@ adminForm.addEventListener("submit", async function(event) {
                 },
                 body: JSON.stringify({
                     AuthFlow: "USER_PASSWORD_AUTH",
-                    ClientId: "1qau16uclj0p2frb7plfr0a9m3",
+                    ClientId: "562c4caevoa8c45g3b9iqvgqf4",
                     AuthParameters: {
                         USERNAME: phone,
                         PASSWORD: password
