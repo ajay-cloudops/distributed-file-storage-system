@@ -3,113 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Access - Distributed File Storage</title>
-    <link rel="stylesheet" href="role-select.css">
+
+    <title>Distributed File Storage</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="page">
+    <div class="app">
 
-    <header class="brand">
-        <div class="brand-icon">D</div>
-
-        <div>
-            <h2>Distributed File Storage</h2>
-            <p>Secure Local + AWS Cloud Storage</p>
-        </div>
-    </header>
-
-    <main class="content">
-
-        <div class="intro">
-            <span>SECURE ACCESS</span>
-
-            <h1>Choose your access type</h1>
-
-            <p>
-                Continue as a user to manage your personal files
-                or sign in as an administrator to manage the system.
-            </p>
-        </div>
-
-        <div class="role-grid">
-
-            <!-- USER -->
-
-            <div class="role-card user-card">
-
-                <div class="icon">👤</div>
-
-                <div class="badge">
-                    USER ACCESS
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">D</div>
+                <div>
+                    <h2>Distributed</h2>
+                    <span>File Storage</span>
                 </div>
-
-                <h2>User</h2>
-
-                <p>
-                    Access your personal Local Storage and AWS S3 files.
-                </p>
-
-                <div class="features">
-                    <span>✓ Personal Files</span>
-                    <span>✓ Local Storage</span>
-                    <span>✓ AWS S3 Storage</span>
-                    <span>✓ Version Recovery</span>
-                </div>
-
-                <button onclick="openUserLogin()">
-                    Continue as User
-                    <span>→</span>
-                </button>
-
             </div>
 
-            <!-- ADMIN -->
+            <nav class="navigation">
+                <a href="#" class="nav-item active">
+                    <span>▣</span>
+                    Dashboard
+                </a>
 
-            <div class="role-card admin-card">
+                <a href="#files" class="nav-item">
+                    <span>□</span>
+                    My Files
+                </a>
+            </nav>
 
-                <div class="icon">🛡️</div>
-
-                <div class="badge admin-badge">
-                    ADMIN ACCESS
+            <div class="sidebar-bottom">
+                <div class="storage-info">
+                    <span>Storage</span>
+                    <strong id="sidebarStorageType">AWS S3 Storage</strong>
                 </div>
-
-                <h2>Administrator</h2>
-
-                <p>
-                    Monitor users, AWS S3 storage and file recovery operations.
-                </p>
-
-                <div class="features">
-                    <span>✓ View All Users</span>
-                    <span>✓ View User Files</span>
-                    <span>✓ Deleted Files</span>
-                    <span>✓ Restore Files</span>
-                </div>
-
-                <button onclick="openAdminLogin()">
-                    Continue as Admin
-                    <span>→</span>
-                </button>
-
             </div>
-
+        
+        <div class="logout-section">
+            <button class="logout-button" onclick="logoutUser()">
+                <span>↪</span>
+                Logout
+            </button>
         </div>
+</aside>
 
-    </main>
+        <!-- Main Content -->
+        <main class="main">
 
-</div>
+            <!-- Header -->
+            <header class="topbar">
+                <div>
+                    <button
+                        class="back-storage-button"
+                        onclick="window.location.href='storage-select.html'"
+                    >
+                        ← Choose Storage
+                    </button>
+                    <p class="welcome">Welcome back 👋</p>
+                    <h1 id="dashboardTitle">File Storage Dashboard</h1>
+                </div>
 
-<script>
-function openUserLogin() {
-    window.location.href = "login.html";
-}
+                <div class="status">
+                    <span class="status-dot"></span>
+                    Backend Connected
+                </div>
+            </header>
 
-function openAdminLogin() {
-    window.location.href = "admin-login.html";
-}
-</script>
+            <!-- Upload Section -->
+            <section class="upload-card">
+
+                <div class="upload-icon">
+                    ↑
+                </div>
+
+                <div class="upload-content">
+                    <h2>Upload your files</h2>
+                    <p>
+                        Select a file from your computer and store it securely.
+                    </p>
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        hidden
+                    >
+
+                    <button
+                        class="upload-button"
+                        id="uploadButton"
+                    >
+                        Choose File
+                    </button>
+
+                    <p id="selectedFile" class="selected-file">
+                        No file selected
+                    </p>
+                </div>
+
+            </section>
+
+            <!-- Statistics -->
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div>
+                        <span>Total Files</span>
+                        <strong id="totalFiles">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💻</div>
+                    <div>
+                        <span id="primaryStorageLabel">Local Storage</span>
+                        <strong id="primaryStorageStatus">Active ✓</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">☁️</div>
+                    <div>
+                        <span id="secondaryStorageLabel">AWS S3 Cloud</span>
+                        <strong id="secondaryStorageStatus">Active ✓</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔁</div>
+                    <div>
+                        <span id="replicationLabel">Replication</span>
+                        <strong id="replicationStatus">Enabled ✓</strong>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Files -->
+            <section class="files-section" id="files">
+
+                <div class="section-header">
+                    <div>
+                        <p class="section-label">YOUR STORAGE</p>
+                        <h2>My Files</h2>
+                    </div>
+
+                    <button
+                        class="refresh-button"
+                        id="refreshButton"
+                    >
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div id="fileList" class="file-list">
+
+                    <div class="empty-state">
+                        <div class="empty-icon">📂</div>
+                        <h3>No files found</h3>
+                        <p>Upload your first file to get started.</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
