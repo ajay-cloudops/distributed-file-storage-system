@@ -52,3 +52,10 @@ func AdminRestoreDeletedFile(key string) error {
 func AdminListBucketObjects() ([]storage.AdminFile, error) {
 	return storage.AdminListBucketObjects()
 }
+
+func AdminDeleteBucketObject(
+	identity *appauth.Identity,
+	key string,
+) error {
+	return storage.AdminDeleteBucketObject(identity, key)
+}

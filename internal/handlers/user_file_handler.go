@@ -214,3 +214,29 @@ func AdminBucketFilesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(files)
 }
+
+func AdminDeleteBucketObjectHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "DELETE required", http.StatusMethodNotAllowed)
+		return
+	}
+
+	admin, err := appauth.AdminFromRequest(r)
+	if err != nil {
+		http.Error(w, "Admin access required", http.StatusUnauthorized)
+		return
+	}
+
+	key := r.URL.Query().Get("key")
+	if key == "" {
+		http.Error(w, "File key required", http.StatusBadRequest)
+		return
+	}
+
+	if err := services.AdminDeleteBucketObject(admin, key); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprint(w, "File moved to recovery bin")
+}

@@ -490,3 +490,83 @@ func AdminRestoreDeletedFile(deletedKey string) error {
 
 	return err
 }
+
+func AdminDeleteBucketObject(
+	identity *appauth.Identity,
+	key string,
+) error {
+
+	client, err := getS3Client()
+	if err != nil {
+		return err
+	}
+
+	object, err := client.GetObject(
+		context.Background(),
+		&s3.GetObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	defer object.Body.Close()
+
+	data, err := io.ReadAll(object.Body)
+	if err != nil {
+		return err
+	}
+
+	deletedAt := time.Now().UTC()
+
+	fileName := filepath.Base(key)
+
+	deletedKey := fmt.Sprintf(
+		"deleted/admin/%d-%s",
+		deletedAt.UnixNano(),
+		fileName,
+	)
+
+	deletedBy := identity.Name
+	if deletedBy == "" {
+		deletedBy = identity.Email
+	}
+	if deletedBy == "" {
+		deletedBy = identity.Phone
+	}
+	if deletedBy == "" {
+		deletedBy = "Administrator"
+	}
+
+	metadata := map[string]string{
+		"deleted-by":   deletedBy,
+		"deleted-at":   deletedAt.Format(time.RFC3339),
+		"original-key": key,
+		"file-name":    fileName,
+	}
+
+	_, err = client.PutObject(
+		context.Background(),
+		&s3.PutObjectInput{
+			Bucket:        aws.String(bucketName),
+			Key:           aws.String(deletedKey),
+			Body:          bytes.NewReader(data),
+			ContentLength: aws.Int64(int64(len(data))),
+			Metadata:      metadata,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = client.DeleteObject(
+		context.Background(),
+		&s3.DeleteObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(key),
+		},
+	)
+
+	return err
+}

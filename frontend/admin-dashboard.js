@@ -74,7 +74,15 @@ function renderFiles(files) {
                 <small>👤 ${escapeAdmin(file.ownerName || file.ownerEmail || "User")}</small>
                 <small>${escapeAdmin(file.ownerEmail || "")}</small>
             </div>
-            <span>${formatBytes(file.size)}</span>
+            <div class="bucket-actions">
+                <span>${formatBytes(file.size)}</span>
+                <button
+                    class="admin-delete-button"
+                    onclick='deleteBucketFile(${JSON.stringify(file.key)})'
+                >
+                    🗑 Delete
+                </button>
+            </div>
         </div>
     `).join("");
 }
@@ -126,6 +134,29 @@ async function loadBucketFiles() {
     }
 
     return response.json();
+}
+
+
+async function deleteBucketFile(key) {
+    if (!confirm("Delete this S3 file? It will be moved to Recovery.")) {
+        return;
+    }
+
+    const response = await fetch(
+        `${ADMIN_API}/api/admin/delete-bucket-file?key=${encodeURIComponent(key)}`,
+        {
+            method: "DELETE",
+            headers: adminHeaders()
+        }
+    );
+
+    if (!response.ok) {
+        alert("Delete failed: " + await response.text());
+        return;
+    }
+
+    alert("File moved to Recovery ✓");
+    await loadAdminDashboard();
 }
 
 function renderBucketFiles(files) {
