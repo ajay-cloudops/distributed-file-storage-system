@@ -232,7 +232,7 @@ async function deleteFile(encodedFileName) {
     } catch (error) {
         console.error("Delete error:", error);
 
-        alert("Unable to delete the file.");
+        alert(`Unable to delete the file: ${error.message}`);
     }
 }
 
