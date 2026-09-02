@@ -85,8 +85,8 @@ async function uploadFile(file) {
     } catch (error) {
         console.error("Upload error:", error);
 
-        selectedFile.textContent = "✕ Upload failed";
-        alert("File upload failed. Please try again.");
+        selectedFile.textContent = `✕ Upload failed: ${error.message}`;
+        alert(`File upload failed: ${error.message}`);
     }
 }
 
