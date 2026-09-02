@@ -71,7 +71,7 @@ function renderFiles(files) {
         <div class="admin-file-row">
             <div>
                 <strong>${escapeAdmin(file.fileName)}</strong>
-                <small>👤 ${escapeAdmin(file.ownerName || "Unknown User")}</small>
+                <small>👤 ${escapeAdmin(file.ownerName || file.ownerEmail || "User")}</small>
                 <small>${escapeAdmin(file.ownerEmail || "")}</small>
             </div>
             <span>${formatBytes(file.size)}</span>
