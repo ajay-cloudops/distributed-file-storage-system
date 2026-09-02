@@ -173,7 +173,17 @@ function renderBucketFiles(files) {
                 <strong>${escapeAdmin(file.fileName)}</strong>
                 <small>${escapeAdmin(file.key)}</small>
             </div>
-            <span>${formatBytes(file.size)}</span>
+
+            <div class="bucket-actions">
+                <span>${formatBytes(file.size)}</span>
+
+                <button
+                    class="admin-delete-button"
+                    onclick='deleteBucketFile(${JSON.stringify(file.key)})'
+                >
+                    🗑 Delete
+                </button>
+            </div>
         </div>
     `).join("");
 }
