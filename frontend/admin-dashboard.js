@@ -114,15 +114,50 @@ function renderDeleted(files) {
     `).join("");
 }
 
+
+async function loadBucketFiles() {
+    const response = await fetch(
+        `${ADMIN_API}/api/admin/bucket-files`,
+        { headers: adminHeaders() }
+    );
+
+    if (!response.ok) {
+        throw new Error(await response.text());
+    }
+
+    return response.json();
+}
+
+function renderBucketFiles(files) {
+    const panel = document.getElementById("s3Files");
+
+    if (!files.length) {
+        panel.innerHTML = "No S3 files found.";
+        return;
+    }
+
+    panel.innerHTML = files.map(file => `
+        <div class="admin-file-row">
+            <div>
+                <strong>${escapeAdmin(file.fileName)}</strong>
+                <small>${escapeAdmin(file.key)}</small>
+            </div>
+            <span>${formatBytes(file.size)}</span>
+        </div>
+    `).join("");
+}
+
 async function loadAdminDashboard() {
     try {
-        const [files, deleted] = await Promise.all([
+        const [files, deleted, bucketFiles] = await Promise.all([
             loadAdminFiles(),
-            loadDeletedFiles()
+            loadDeletedFiles(),
+            loadBucketFiles()
         ]);
 
         renderFiles(files);
         renderDeleted(deleted);
+        renderBucketFiles(bucketFiles);
 
     } catch (error) {
         console.error(error);

@@ -48,3 +48,7 @@ func AdminListDeletedFiles() ([]storage.DeletedFile, error) {
 func AdminRestoreDeletedFile(key string) error {
 	return storage.AdminRestoreDeletedFile(key)
 }
+
+func AdminListBucketObjects() ([]storage.AdminFile, error) {
+	return storage.AdminListBucketObjects()
+}

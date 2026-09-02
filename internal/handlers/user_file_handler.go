@@ -198,3 +198,19 @@ func AdminRestoreDeletedHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, "File restored successfully")
 }
+
+func AdminBucketFilesHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := appauth.AdminFromRequest(r); err != nil {
+		http.Error(w, "Admin access required", http.StatusUnauthorized)
+		return
+	}
+
+	files, err := services.AdminListBucketObjects()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(files)
+}

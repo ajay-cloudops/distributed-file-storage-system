@@ -70,6 +70,7 @@ func main() {
 
 	// Admin APIs
 	http.HandleFunc("/api/admin/files", handlers.AdminFilesHandler)
+	http.HandleFunc("/api/admin/bucket-files", handlers.AdminBucketFilesHandler)
 	http.HandleFunc("/api/admin/deleted", handlers.AdminDeletedFilesHandler)
 	http.HandleFunc("/api/admin/restore", handlers.AdminRestoreDeletedHandler)
 

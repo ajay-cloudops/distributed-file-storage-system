@@ -295,6 +295,39 @@ func DeleteUserS3File(
 	return err
 }
 
+func AdminListBucketObjects() ([]AdminFile, error) {
+	client, err := getS3Client()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := client.ListObjectsV2(
+		context.Background(),
+		&s3.ListObjectsV2Input{
+			Bucket: aws.String(bucketName),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	files := []AdminFile{}
+
+	for _, object := range result.Contents {
+		if object.Key == nil {
+			continue
+		}
+
+		files = append(files, AdminFile{
+			Key:      *object.Key,
+			FileName: filepath.Base(*object.Key),
+			Size:     aws.ToInt64(object.Size),
+		})
+	}
+
+	return files, nil
+}
+
 func AdminListAllFiles() ([]AdminFile, error) {
 	client, err := getS3Client()
 	if err != nil {
